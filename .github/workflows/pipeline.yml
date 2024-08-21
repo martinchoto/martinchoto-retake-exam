@@ -7,11 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
-
-
     steps:
     - name: Checkout the code
       uses: actions/checkout@v4
@@ -22,7 +19,27 @@ jobs:
         cache: 'npm'
     - name: Install the npm dependancies
       run: npm install
-    - name: Run the unit tests
-      run: npm run test:unit
     - name: Show SoftUni username
       run: echo martinchoto
+    - name: Run the unit tests
+      run: npm run test:unit
+  test-ui:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v4
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18.x
+        cache: 'npm'
+    - name: Install the npm dependancies
+      run: npm install
+    - name: Start the app
+      run: npm run start &
+    - name: Install Playwright framework
+      run: npx playwright install
+    - name: Test the UI tests
+      run: npm run test:ui
+    
